@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-zruApR6S1gbL0OeSqjrFYseztvotdAyMBwK9aaVg6AeY3I4Wl9PrtQ/kOcvtO1PnwYFqxu3MNSXfs3lEpxdumQ==" crossorigin="anonymous" />
+   
+    <link rel="stylesheet" href="/css/cours.css">
+    <title>Editeur de Texte</title>
+
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="font">
+                <button onclick="execCommand('bold')">B</button>
+                <button onclick="execCommand('italic')">I</button>
+                <button onclick="execCommand('underline')">U</button>
+                <button onclick="execCommand('insertOrderedList')">&#35;</button>
+                <button onclick="execCommand('insertUnorderedList')">&#8226;</button>
+                <button onclick="execCommand('createLink', prompt('Entrez l\'URL', 'http://'))">&#128279;</button>
+                <button onclick="execCommand('unlink')">&#127988;</button>
+           
+                <button onclick="execCommand('justifyLeft')">L</button>
+                <button onclick="execCommand('justifyCenter')">C</button>
+                <button onclick="execCommand('justifyRight')">R</button>
+                <button onclick="execCommand('justifyFull')">J</button>
+                    
+            <select id="heading" onchange="execCommand('formatBlock', false, this.value)">
+                <option value="p">P</option>
+                <option value="h1">Titre 1</option>
+                <option value="h2">Titre 2</option>
+                <option value="h3">Titre 3</option>
+            </select>
+
+            <div class="scp" style="display:flex;">
+                <input type="number" id="fontSize" min="1" max="100" value="16" onchange="updateFontSize()">
+    
+                    <script>
+                    function updateFontSize() {
+                        var fontSize = document.getElementById('fontSize').value + 'px';
+                        var paragraphs = document.querySelectorAll("p");
+                        
+                        paragraphs.forEach(function(paragraph) {
+                            paragraph.style.fontSize = fontSize;
+                        });
+                    }
+                    </script>
+    
+                <input type="color" id="fontColor" onchange="execCommand('foreColor', false, this.value)">
+            
+               </div>
+            </div>
+           
+
+           
+           
+        </div>
+        <div class="inputDiv">
+    
+
+                <p id="showcategorie"></p>
+                <p id="url"></p>
+                <div class="inputdata">
+                    <div class="input flex">
+                        <div><input id="title" type="text" placeholder="Titre"></div>
+                        <div class="select" style= "display:flex;">
+                            <select name="category" id="category" onchange="categorie()">
+                                <option value="">Select</option>
+                                <option value="Statues">Statue</option>
+                                <option value="Livres">Livres</option>
+                                <option value="Mesarticles">Mesarticles</option>
+                                <option value="Cours">Cours</option>
+                            </select>
+                            <select name="subcategory" id="subcategory" onclick="subcategory()" onchange="subcategory()">
+                                <option value="">Select</option>
+                            </select>
+                    
+                        </div>
+                    </div>
+                    
+        
+                    <div class="input flex">
+                        <div><input id="imagelink" type="text" placeholder="Ajouter lien image"></div>
+                       <div>
+                        <label for="upload" class="upload-button"><i class="fa fa-upload"></i> </label>
+                        <input type="file" id="upload" name="Images" accept="image/*" style="display:none;">
+                       </div>
+                       <input id="Type" type="text" placeholder="Ajouter Type">
+                    </div>
+        
+                    <div class="input flex">
+                       
+                    </div> 
+                </div>
+        
+           </div>
+        <main>
+            
+               <img id="img" src="" alt="">
+                <div contenteditable="true" id="editor">
+                </div>
+            
+                <div class="allbtn">
+                    <button onclick="search()">Rechercher</button>
+                    <button onclick="save()">Save</button>
+                    <button onclick="update()">Update</button>
+                </div>
+        </main>
+    </div>
+
+
+     <!-- Include Firebase SDK -->
+     <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-database.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+    <script src="/js/cours.js" defer></script>
+    
+    <script>
+        function execCommand(command, showDefaultUI = false, value = null) {
+    document.execCommand(command, showDefaultUI, value);
+}
+
+function generateCode() {
+    const editorContent = document.getElementById('editor').innerHTML;
+    const code = `<div style="font-family: Arial, sans-serif; border: 1px solid #ccc; min-height: 200px; padding: 10px;">${editorContent}</div>`;
+    
+    const htmlCode = `<!-- HTML Code -->\n${code}`;
+    const cssCode = `/* CSS Code */\n${document.getElementById('editor').getAttribute('style')}`;
+
+    console.log(htmlCode);
+    console.log(cssCode);
+}
+
+    </script>
+
+<script>
+    let url = "https://script.google.com/macros/s/AKfycbz0yrLcLqezuK9Ubk9aQ_HbkFJMNi6BER3RCZ_YOmr_vkaWAcRDFxrXrRBxNjdzi3ko/exec";
+    let file = document.getElementById("upload");
+    let img = document.getElementById("img");
+    let urlParagraph = document.getElementById("url");
+
+    file.addEventListener('change', () => {
+      let fr = new FileReader();
+
+      fr.addEventListener('loadend', () => {
+        let res = fr.result;
+        img.src = res;
+
+        let spt = res.split("base64,")[1];
+        let obj = {
+          base64: spt,
+          type: file.files[0].type,
+          name: file.files[0].name
+        };
+
+        fetch(url, {
+          method: "POST",
+          body: JSON.stringify(obj)
+        })
+        .then(r => r.text())
+        .then(data => {
+          console.log(data);
+          // Assuming the server returns the direct URL of the uploaded image
+          urlParagraph.textContent = "Image URL: " + data;
+        });
+      });
+
+      fr.readAsDataURL(file.files[0]);
+    });
+  </script>
+</body>
+</html>

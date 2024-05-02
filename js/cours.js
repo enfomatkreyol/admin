@@ -147,7 +147,6 @@ function save() {
       var title = document.getElementById('title').value;
       var image = document.getElementById('imagelink');
       var type = document.getElementById('Type');
-      var details = document.getElementById('details');
       
       //var imglink = document.getElementById('imagelink').value;
       console.log(title);
@@ -155,13 +154,12 @@ function save() {
           console.log(category);
           const data = snapshot.val();
           console.log(data);
+          console.log(data.Type);
           if (data) {
               // Display data in the editor or handle it as needed
-              document.getElementById('editor').innerHTML = data.Description;
-               
-                details.value = data.Details;
-                type.value = data.Type;
+                document.getElementById('editor').innerHTML = data.Description
                 image.value = data.Image;
+                type.value = data.Type;
 
           } else {
               alert('No data found for the selected category.');
