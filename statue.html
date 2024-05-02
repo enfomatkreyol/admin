@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Text Editor</title>
+    <link rel="stylesheet" href="/css/statue.css">
+</head>
+<body>
+   <div class="barmenu">
+    <div class="font">
+        <button onclick="execCommand('bold')">B</button>
+        <button onclick="execCommand('italic')">I</button>
+        <button onclick="execCommand('underline')">U</button>
+        <button onclick="execCommand('insertOrderedList')">&#35;</button>
+        <button onclick="execCommand('insertUnorderedList')">&#8226;</button>
+    
+        <button onclick="execCommand('justifyLeft')">L</button>
+        <button onclick="execCommand('justifyCenter')">C</button>
+        <button onclick="execCommand('justifyRight')">R</button>
+        <button onclick="execCommand('justifyFull')">J</button>
+            
+    <select id="heading" onchange="execCommand('formatBlock', false, this.value)">
+        <option value="">p</option>
+        <option value="p">P</option>
+    </select>
+    </div>
+
+    <div class="scp">
+        <input type="number" id="fontSize" min="1" max="100" value="16" onchange="updateFontSize()">
+            <script>
+            function updateFontSize() {
+                var fontSize = document.getElementById('fontSize').value + 'px';
+                var paragraphs = document.querySelectorAll("p");
+                
+                paragraphs.forEach(function(paragraph) {
+                    paragraph.style.fontSize = fontSize;
+                });
+            }
+            </script>
+        <input type="color" id="fontColor" onchange="execCommand('foreColor', false, this.value)">       
+       </div>
+   </div>
+
+
+   <main>
+    <div class="input">
+        <input type="text" id="title" placeholder="Enter title">
+    </div>
+    <div class="input flex">
+        <select id="type">
+            <option value="t">Triste</option>
+            <option value="a">Amour</option>
+            <option value="d">Declaration</option>
+            <option value="b">Blagues</option>
+            <option value="h">Histoire</option>
+        </select>
+    </div>
+    <label for="description">Description:</label>
+    <div id="description" oninput="updatePreview()" contenteditable="true"></div>
+    <div id="output" contenteditable="true"></div>
+    <button onclick="saveText()">Save</button>
+    <button onclick="updateText()">Update</button>
+    <button onclick="searchText()">Search</button>
+   </main>
+    
+    <script>
+        function updatePreview() {
+        var descriptionContent = document.getElementById('description').innerHTML;
+        var previewElement = document.getElementById('output');
+        console.log(descriptionContent);
+        previewElement.innerText=descriptionContent;
+
+        }
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+
+    <script>
+        const firebaseConfig = {
+    apiKey: "AIzaSyCvqf6mNg-FsbcU7vZf52xEi6Skp9tz3yU",
+    authDomain: "signup-286f7.firebaseapp.com",
+    databaseURL: "https://signup-286f7-default-rtdb.firebaseio.com",
+    projectId: "signup-286f7",
+    storageBucket: "signup-286f7.appspot.com",
+    messagingSenderId: "579225916993",
+    appId: "1:579225916993:web:f4f70c8c24584a770018c0",
+    measurementId: "G-RH5HF2F7DN"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+
+
+
+ function saveText() {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').innerText; // Use innerText to retrieve content
+    const type = document.getElementById('type').value;
+    var previewElement = document.getElementById('output').innerText;
+
+     // Get the current timestamp
+     var timestamp = new Date().toISOString();
+
+    if (title && description) {
+        // Save data to Firebase
+        database.ref('Statues/' + title).set({
+            Title: title,
+            Description: previewElement,
+            Type: type,
+            Times : timestamp
+        });
+
+        // Optionally, you can provide feedback to the user that the data has been saved successfully
+        alert('Data saved successfully!');
+
+        // Clear input fields after saving
+        document.getElementById('title').value = '';
+        document.getElementById('description').innerText = ''; // Clear contenteditable div
+        document.getElementById('type').value = '';
+    } else {
+        alert("Please enter both title and description.");
+    }
+}
+ 
+
+
+        // Function to search data in Firebase
+        function searchText() {
+            const searchTerm = document.getElementById('title').value;
+            const descriptionInput = document.getElementById('description');
+            
+            // Search data in Firebase based on searchTerm
+            database.ref('Statues').orderByChild('Title').equalTo(searchTerm).once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    const data = childSnapshot.val();
+                    console.log(data);
+                    // Set the search result to input fields
+                    descriptionInput.innerHTML = data.Description;
+                    // If you want to set other fields like title, category, or type, do it similarly
+                });
+            });
+        }
+    </script>
+</body>
+</html>
