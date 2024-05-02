@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0px;
+    box-sizing: border-box;
+    padding: 0px;
+    overflow-x: hidden;
+}
+.barmenu{
+    width:100%;
+    background-color: grey;
+    display: block;
+    position: fixed;
+    top: 0;
+}
+
+.font{
+    border: 2px solid red;
+    display: flex;
+    overflow-x: auto;
+    justify-content: space-around;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 1px;
+    height: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background:blue; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+.font button{
+    margin: 3px;
+}
+main{
+    border: 1px solid lime;
+    box-sizing: border;
+    max-width: 100%;
+    margin-top: 79px;
+    padding: 5px;
+}
+
+.flex{
+    display: flex;
+}
+#description, #output {
+    max-width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid black;
+}
+.input{
+    border: 2px solid blue;
+    margin: 5px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+
+}
+input[type="text"] {
+    width: 100%;
+    padding: 5px;
+}
+select{
+    width: 70px;
+    margin-right: 10px;
+    height: auto;
+}
+button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
